@@ -1,11 +1,9 @@
 "use client";
 
-import { DECISION_CTA_CARDS } from "@/data/decision-cta-cards";
 import type { DecisionKey, DecisionsState, SubmitSection } from "@/types/connection-card";
 import { AccordionSection } from "./AccordionSection";
 import { SectionSubmitButton } from "./SectionSubmitButton";
 import { CheckboxField } from "../ui/CheckboxField";
-import { DecisionCard } from "./DecisionCard";
 
 const DECISION_OPTIONS: {
   key: DecisionKey;
@@ -46,13 +44,10 @@ export function MyDecisionSection({
     <AccordionSection
       title="My Decision Today"
       subtitle="Share what God is doing in your life — every step matters"
-      statusLabel={
-        hasAnyDecision ? "Thank you for sharing" : "Optional — tap to expand"
-      }
       isComplete={hasAnyDecision}
       badge="Optional"
     >
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5">
         <fieldset>
           <legend className="mb-3 text-sm font-medium text-slate-700">
             Today I…
@@ -69,25 +64,6 @@ export function MyDecisionSection({
             ))}
           </div>
         </fieldset>
-
-        <div>
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Helpful next steps
-          </h3>
-          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-3">
-            {DECISION_CTA_CARDS.map((card) => (
-              <DecisionCard
-                key={card.id}
-                data={card}
-                highlighted={
-                  card.relatedDecision
-                    ? value[card.relatedDecision]
-                    : false
-                }
-              />
-            ))}
-          </div>
-        </div>
 
         {error && (
           <p className="text-sm text-red-600" role="alert">

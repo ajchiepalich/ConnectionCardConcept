@@ -7,6 +7,7 @@ import { MyDecisionSection } from "./MyDecisionSection";
 import { MyInformationSection } from "./MyInformationSection";
 import { PrayerRequestSection } from "./PrayerRequestSection";
 import { SuccessState } from "./SuccessState";
+import { CheckboxField } from "../ui/CheckboxField";
 
 export function ConnectionCardPage() {
   const {
@@ -46,6 +47,17 @@ export function ConnectionCardPage() {
       <ConnectionCardHeader />
 
       <div className="mt-10 flex flex-col gap-6">
+        <div className="rounded-2xl border border-slate-200/80 bg-white px-4 py-4 shadow-sm sm:px-5">
+          <CheckboxField
+            id="firstTimeGuest"
+            label="I am a first-time guest"
+            checked={myInformation.isFirstTimeGuest}
+            onChange={(checked) =>
+              updateMyInformation({ isFirstTimeGuest: checked })
+            }
+          />
+        </div>
+
         <MyInformationSection
           value={myInformation}
           onChange={updateMyInformation}

@@ -4,10 +4,8 @@ import { CAMPUSES } from "@/data/campuses";
 import type { MyInformationState, SubmitSection } from "@/types/connection-card";
 import { AccordionSection } from "./AccordionSection";
 import { SectionSubmitButton } from "./SectionSubmitButton";
-import { CheckboxField } from "../ui/CheckboxField";
 import { SelectField } from "../ui/SelectField";
 import { TextField } from "../ui/TextField";
-import { TextAreaField } from "../ui/TextAreaField";
 
 interface MyInformationSectionProps {
   value: MyInformationState;
@@ -51,9 +49,6 @@ export function MyInformationSection({
     <AccordionSection
       title="My Information"
       subtitle="Just the basics — only name and email are required"
-      statusLabel={
-        isComplete ? "Ready" : "First name, last name & email needed"
-      }
       isComplete={isComplete}
     >
       <div className="flex flex-col gap-5">
@@ -106,20 +101,6 @@ export function MyInformationSection({
           }
           options={CAMPUSES.map((c) => ({ value: c.id, label: c.label }))}
           placeholder="Which campus are you visiting?"
-        />
-        <CheckboxField
-          id="firstTimeGuest"
-          label="I am a first-time guest"
-          checked={value.isFirstTimeGuest}
-          onChange={(checked) => onChange({ isFirstTimeGuest: checked })}
-        />
-        <TextAreaField
-          id="notes"
-          label="Anything else we should know?"
-          value={value.notes}
-          onChange={(v) => onChange({ notes: v })}
-          placeholder="Optional — allergies for kids ministry, accessibility needs, etc."
-          rows={3}
         />
 
         {error && (

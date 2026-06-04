@@ -39,9 +39,6 @@ export function PrayerRequestSection({
     <AccordionSection
       title="Submit a Prayer Request"
       subtitle="We would be honored to pray with you — what you share stays with our pastoral care team"
-      statusLabel={
-        hasPrayerContent ? "Prayer request added" : "Optional — tap to expand"
-      }
       isComplete={hasPrayerContent}
       badge="Optional"
       className="bg-gradient-to-b from-white to-highlands-50/40"
