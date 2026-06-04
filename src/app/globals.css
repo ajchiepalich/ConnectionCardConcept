@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f4f8fc;
+  --foreground: #1e293b;
+  --highlands-50: #eff6fc;
+  --highlands-100: #dbeafe;
+  --highlands-200: #bfdbfe;
+  --highlands-300: #93c5fd;
+  --highlands-400: #5b9bd5;
+  --highlands-500: #3b82b8;
+  --highlands-600: #2a6fa8;
+  --highlands-700: #1e5a8a;
+  --highlands-800: #1a4a72;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-highlands-50: var(--highlands-50);
+  --color-highlands-100: var(--highlands-100);
+  --color-highlands-200: var(--highlands-200);
+  --color-highlands-300: var(--highlands-300);
+  --color-highlands-400: var(--highlands-400);
+  --color-highlands-500: var(--highlands-500);
+  --color-highlands-600: var(--highlands-600);
+  --color-highlands-700: var(--highlands-700);
+  --color-highlands-800: var(--highlands-800);
+  --font-sans: var(--font-source-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-source-sans), system-ui, sans-serif;
+}
