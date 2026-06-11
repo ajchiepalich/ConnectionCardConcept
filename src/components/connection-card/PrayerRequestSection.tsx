@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback } from "react";
+import { useAccordionSubmit } from "@/hooks/useAccordionSubmit";
 import type { PrayerRequestState, SubmitSection } from "@/types/connection-card";
 import { AccordionSection } from "./AccordionSection";
 import { SectionSubmitButton } from "./SectionSubmitButton";
@@ -11,7 +13,7 @@ interface PrayerRequestSectionProps {
   onChange: (patch: Partial<PrayerRequestState>) => void;
   hasPrayerContent: boolean;
   showPrayerError?: boolean;
-  onSubmit: () => void;
+  onSubmit: () => Promise<boolean>;
   isSubmitting?: boolean;
   submittingSection?: SubmitSection | null;
   error?: string | null;
@@ -27,6 +29,8 @@ export function PrayerRequestSection({
   submittingSection,
   error,
 }: PrayerRequestSectionProps) {
+  const { isOpen, setIsOpen, handleSubmit } = useAccordionSubmit(onSubmit);
+
   const isThisSectionSubmitting =
     isSubmitting && submittingSection === "prayer";
 
@@ -35,13 +39,18 @@ export function PrayerRequestSection({
       ? "Please share your prayer request"
       : undefined;
 
+  const onSubmitClick = useCallback(() => {
+    void handleSubmit();
+  }, [handleSubmit]);
+
   return (
     <AccordionSection
       title="Submit a Prayer Request"
       subtitle="We would be honored to pray with you — what you share stays with our pastoral care team"
       isComplete={hasPrayerContent}
-      badge="Optional"
       className="bg-gradient-to-b from-white to-highlands-50/40"
+      open={isOpen}
+      onOpenChange={setIsOpen}
     >
       <div className="flex flex-col gap-5">
         <TextAreaField
@@ -83,7 +92,7 @@ export function PrayerRequestSection({
         <div className="flex justify-end border-t border-slate-100 pt-4">
           <SectionSubmitButton
             label="Submit Prayer Request"
-            onClick={onSubmit}
+            onClick={onSubmitClick}
             isSubmitting={isThisSectionSubmitting}
             disabled={isSubmitting && !isThisSectionSubmitting}
           />

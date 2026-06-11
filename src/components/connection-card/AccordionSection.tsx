@@ -9,6 +9,9 @@ interface AccordionSectionProps {
   statusLabel?: string;
   isComplete?: boolean;
   defaultOpen?: boolean;
+  /** Controlled open state */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   children: ReactNode;
   /** Optional badge, e.g. "Optional" */
   badge?: string;
@@ -22,13 +25,24 @@ export function AccordionSection({
   statusLabel,
   isComplete = false,
   defaultOpen = false,
+  open: controlledOpen,
+  onOpenChange,
   children,
   badge,
   className = "",
 }: AccordionSectionProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const isControlled = controlledOpen !== undefined;
+  const isOpen = isControlled ? controlledOpen : internalOpen;
   const panelId = useId();
   const buttonId = useId();
+
+  const setOpen = (next: boolean) => {
+    if (!isControlled) {
+      setInternalOpen(next);
+    }
+    onOpenChange?.(next);
+  };
 
   return (
     <section
@@ -40,7 +54,7 @@ export function AccordionSection({
         type="button"
         aria-expanded={isOpen}
         aria-controls={panelId}
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => setOpen(!isOpen)}
         className="flex w-full items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-slate-50/80 sm:px-5 sm:py-5"
       >
         <span

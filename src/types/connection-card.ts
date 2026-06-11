@@ -37,6 +37,17 @@ export interface MyInformationState {
   notes: string;
 }
 
+/** Recognized user profile from session / CRM — used for personalized experience */
+export interface KnownUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  campus?: CampusId;
+  isFirstTimeGuest?: boolean;
+}
+
 export interface PrayerRequestState {
   request: string;
   keepConfidential: boolean;

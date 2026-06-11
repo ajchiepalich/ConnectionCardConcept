@@ -1,5 +1,7 @@
 "use client";
 
+import { useCallback } from "react";
+import { useAccordionSubmit } from "@/hooks/useAccordionSubmit";
 import type { DecisionKey, DecisionsState, SubmitSection } from "@/types/connection-card";
 import { AccordionSection } from "./AccordionSection";
 import { SectionSubmitButton } from "./SectionSubmitButton";
@@ -22,7 +24,7 @@ interface MyDecisionSectionProps {
   value: DecisionsState;
   onChange: (patch: Partial<DecisionsState>) => void;
   hasAnyDecision: boolean;
-  onSubmit: () => void;
+  onSubmit: () => Promise<boolean>;
   isSubmitting?: boolean;
   submittingSection?: SubmitSection | null;
   error?: string | null;
@@ -37,15 +39,22 @@ export function MyDecisionSection({
   submittingSection,
   error,
 }: MyDecisionSectionProps) {
+  const { isOpen, setIsOpen, handleSubmit } = useAccordionSubmit(onSubmit);
+
   const isThisSectionSubmitting =
     isSubmitting && submittingSection === "decisions";
+
+  const onSubmitClick = useCallback(() => {
+    void handleSubmit();
+  }, [handleSubmit]);
 
   return (
     <AccordionSection
       title="My Decision Today"
       subtitle="Share what God is doing in your life — every step matters"
       isComplete={hasAnyDecision}
-      badge="Optional"
+      open={isOpen}
+      onOpenChange={setIsOpen}
     >
       <div className="flex flex-col gap-5">
         <fieldset>
@@ -74,7 +83,7 @@ export function MyDecisionSection({
         <div className="flex justify-end border-t border-slate-100 pt-4">
           <SectionSubmitButton
             label="Submit My Decision"
-            onClick={onSubmit}
+            onClick={onSubmitClick}
             isSubmitting={isThisSectionSubmitting}
             disabled={isSubmitting && !isThisSectionSubmitting}
           />

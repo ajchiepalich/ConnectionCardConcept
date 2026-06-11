@@ -1,6 +1,8 @@
 "use client";
 
+import { useCallback } from "react";
 import { CAMPUSES } from "@/data/campuses";
+import { useAccordionSubmit } from "@/hooks/useAccordionSubmit";
 import type { MyInformationState, SubmitSection } from "@/types/connection-card";
 import { AccordionSection } from "./AccordionSection";
 import { SectionSubmitButton } from "./SectionSubmitButton";
@@ -12,7 +14,7 @@ interface MyInformationSectionProps {
   onChange: (patch: Partial<MyInformationState>) => void;
   isComplete: boolean;
   showErrors?: boolean;
-  onSubmit: () => void;
+  onSubmit: () => Promise<boolean>;
   isSubmitting?: boolean;
   submittingSection?: SubmitSection | null;
   error?: string | null;
@@ -28,6 +30,8 @@ export function MyInformationSection({
   submittingSection,
   error,
 }: MyInformationSectionProps) {
+  const { isOpen, setIsOpen, handleSubmit } = useAccordionSubmit(onSubmit);
+
   const emailError =
     showErrors &&
     value.email.trim().length > 0 &&
@@ -45,11 +49,17 @@ export function MyInformationSection({
   const isThisSectionSubmitting =
     isSubmitting && submittingSection === "information";
 
+  const onSubmitClick = useCallback(() => {
+    void handleSubmit();
+  }, [handleSubmit]);
+
   return (
     <AccordionSection
       title="My Information"
       subtitle="Just the basics — only name and email are required"
       isComplete={isComplete}
+      open={isOpen}
+      onOpenChange={setIsOpen}
     >
       <div className="flex flex-col gap-5">
         <div className="grid gap-5 sm:grid-cols-2">
@@ -112,7 +122,7 @@ export function MyInformationSection({
         <div className="flex justify-end border-t border-slate-100 pt-4">
           <SectionSubmitButton
             label="Submit My Information"
-            onClick={onSubmit}
+            onClick={onSubmitClick}
             isSubmitting={isThisSectionSubmitting}
             disabled={isSubmitting && !isThisSectionSubmitting}
           />

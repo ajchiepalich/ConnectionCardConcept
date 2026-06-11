@@ -34,7 +34,15 @@ const initialPrayerRequest: PrayerRequestState = {
   requestFollowUp: false,
 };
 
-export function useConnectionCardForm() {
+interface UseConnectionCardFormOptions {
+  /** Skip contact-field validation when user is already known */
+  isKnownUser?: boolean;
+}
+
+export function useConnectionCardForm(
+  options: UseConnectionCardFormOptions = {}
+) {
+  const { isKnownUser = false } = options;
   const [myInformation, setMyInformation] =
     useState<MyInformationState>(initialMyInformation);
   const [decisions, setDecisions] = useState<DecisionsState>(initialDecisions);
@@ -78,6 +86,10 @@ export function useConnectionCardForm() {
     []
   );
 
+  const setMyInformationDirect = useCallback((value: MyInformationState) => {
+    setMyInformation(value);
+  }, []);
+
   const updateDecisions = useCallback((patch: Partial<DecisionsState>) => {
     setDecisions((prev) => ({ ...prev, ...patch }));
   }, []);
@@ -106,7 +118,7 @@ export function useConnectionCardForm() {
     (section: SubmitSection): string | null => {
       setTouched(true);
 
-      if (!myInformationComplete) {
+      if (!isKnownUser && !myInformationComplete) {
         return "Please add your first name, last name, and a valid email so we can connect with you.";
       }
 
@@ -117,39 +129,46 @@ export function useConnectionCardForm() {
 
       return null;
     },
-    [myInformationComplete, hasPrayerContent]
+    [isKnownUser, myInformationComplete, hasPrayerContent]
   );
 
   const handleSectionSubmit = useCallback(
-    async (section: SubmitSection) => {
+    async (section: SubmitSection): Promise<boolean> => {
       setSubmitError(null);
       setErrorSection(null);
       const validationError = validateForSection(section);
       if (validationError) {
         setSubmitError(validationError);
         setErrorSection(section);
-        return;
+        return false;
       }
 
       setIsSubmitting(true);
       setSubmittingSection(section);
-      try {
-        const result = await submitConnectionCard(buildPayload(section));
-        if (result.success) {
-          setIsSuccess(true);
-        } else {
+
+      void submitConnectionCard(buildPayload(section))
+        .then((result) => {
+          if (result.success) {
+            setIsSuccess(true);
+          } else {
+            setSubmitError(
+              result.message ?? "Something went wrong. Please try again."
+            );
+            setErrorSection(section);
+          }
+        })
+        .catch(() => {
           setSubmitError(
-            result.message ?? "Something went wrong. Please try again."
+            "Unable to submit right now. Please try again in a moment."
           );
-        }
-      } catch {
-        setSubmitError(
-          "Unable to submit right now. Please try again in a moment."
-        );
-      } finally {
-        setIsSubmitting(false);
-        setSubmittingSection(null);
-      }
+          setErrorSection(section);
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+          setSubmittingSection(null);
+        });
+
+      return true;
     },
     [buildPayload, validateForSection]
   );
@@ -171,6 +190,7 @@ export function useConnectionCardForm() {
     decisions,
     prayerRequest,
     updateMyInformation,
+    setMyInformation: setMyInformationDirect,
     updateDecisions,
     updatePrayerRequest,
     myInformationComplete,
